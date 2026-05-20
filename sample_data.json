@@ -1,0 +1,196 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "age": 32,
+      "isActive": true,
+      "balance": 1234.56,
+      "registeredDate": "2025-01-15T10:30:00Z",
+      "address": {
+        "street": "123 Main St",
+        "city": "Springfield",
+        "state": "IL",
+        "zipCode": "62701",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "age": 28,
+      "isActive": true,
+      "balance": 2567.89,
+      "registeredDate": "2025-02-20T14:15:00Z",
+      "address": {
+        "street": "456 Oak Ave",
+        "city": "Portland",
+        "state": "OR",
+        "zipCode": "97201",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Michael Johnson",
+      "email": "m.johnson@example.com",
+      "age": 45,
+      "isActive": false,
+      "balance": 567.23,
+      "registeredDate": "2024-11-05T08:45:00Z",
+      "address": {
+        "street": "789 Pine Rd",
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": "78701",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Emily Davis",
+      "email": "emily.d@example.com",
+      "age": 34,
+      "isActive": true,
+      "balance": 3421.67,
+      "registeredDate": "2025-03-12T11:20:00Z",
+      "address": {
+        "street": "321 Elm St",
+        "city": "Seattle",
+        "state": "WA",
+        "zipCode": "98101",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Robert Brown",
+      "email": "rbrown@example.com",
+      "age": 52,
+      "isActive": true,
+      "balance": 890.12,
+      "registeredDate": "2024-08-30T16:00:00Z",
+      "address": {
+        "street": "654 Maple Dr",
+        "city": "Denver",
+        "state": "CO",
+        "zipCode": "80201",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Sarah Wilson",
+      "email": "s.wilson@example.com",
+      "age": 29,
+      "isActive": true,
+      "balance": 4123.45,
+      "registeredDate": "2025-04-18T09:30:00Z",
+      "address": {
+        "street": "987 Cedar Ln",
+        "city": "Boston",
+        "state": "MA",
+        "zipCode": "02101",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 7,
+      "name": "David Martinez",
+      "email": "david.m@example.com",
+      "age": 41,
+      "isActive": false,
+      "balance": 1567.9,
+      "registeredDate": "2024-12-10T13:45:00Z",
+      "address": {
+        "street": "147 Birch Way",
+        "city": "Miami",
+        "state": "FL",
+        "zipCode": "33101",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 8,
+      "name": "Lisa Anderson",
+      "email": "lisa.a@example.com",
+      "age": 36,
+      "isActive": true,
+      "balance": 2890.34,
+      "registeredDate": "2025-05-22T10:00:00Z",
+      "address": {
+        "street": "258 Willow Ct",
+        "city": "Phoenix",
+        "state": "AZ",
+        "zipCode": "85001",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 9,
+      "name": "James Taylor",
+      "email": "jtaylor@example.com",
+      "age": 48,
+      "isActive": true,
+      "balance": 678.45,
+      "registeredDate": "2024-09-15T15:30:00Z",
+      "address": {
+        "street": "369 Spruce Ave",
+        "city": "Philadelphia",
+        "state": "PA",
+        "zipCode": "19101",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 10,
+      "name": "Jennifer Thomas",
+      "email": "jen.thomas@example.com",
+      "age": 31,
+      "isActive": true,
+      "balance": 5234.78,
+      "registeredDate": "2025-06-08T12:15:00Z",
+      "address": {
+        "street": "741 Ash Blvd",
+        "city": "San Diego",
+        "state": "CA",
+        "zipCode": "92101",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 11,
+      "name": "Christopher Lee",
+      "email": "c.lee@example.com",
+      "age": 39,
+      "isActive": false,
+      "balance": 1234.0,
+      "registeredDate": "2024-10-20T07:45:00Z",
+      "address": {
+        "street": "852 Poplar St",
+        "city": "Chicago",
+        "state": "IL",
+        "zipCode": "60601",
+        "country": "USA"
+      }
+    },
+    {
+      "id": 12,
+      "name": "Amanda White",
+      "email": "amanda.w@example.com",
+      "age": 27,
+      "isActive": true,
+      "balance": 3678.92,
+      "registeredDate": "2025-07-03T14:00:00Z",
+      "address": {
+        "street": "963 Hickory Rd",
+        "city": "Nashville",
+        "state": "TN",
+        "zipCode": "37201",
+        "country": "USA"
+      }
+    }
+  ]
+}
