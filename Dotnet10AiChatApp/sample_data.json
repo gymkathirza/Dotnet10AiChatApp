@@ -1,0 +1,198 @@
+{
+  "syntheticData": true,
+  "note": "This file contains synthetic placeholder data for testing and examples.",
+  "data": [
+    {
+      "id": 1,
+      "name": "User 1",
+      "email": "user1@invalid.example",
+      "age": 32,
+      "isActive": true,
+      "balance": 1234.56,
+      "registeredDate": "2025-01-15T10:30:00Z",
+      "address": {
+        "street": "100 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 2,
+      "name": "User 2",
+      "email": "user2@invalid.example",
+      "age": 28,
+      "isActive": true,
+      "balance": 2567.89,
+      "registeredDate": "2025-02-20T14:15:00Z",
+      "address": {
+        "street": "200 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 3,
+      "name": "User 3",
+      "email": "user3@invalid.example",
+      "age": 45,
+      "isActive": false,
+      "balance": 567.23,
+      "registeredDate": "2024-11-05T08:45:00Z",
+      "address": {
+        "street": "300 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 4,
+      "name": "User 4",
+      "email": "user4@invalid.example",
+      "age": 34,
+      "isActive": true,
+      "balance": 3421.67,
+      "registeredDate": "2025-03-12T11:20:00Z",
+      "address": {
+        "street": "400 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 5,
+      "name": "User 5",
+      "email": "user5@invalid.example",
+      "age": 52,
+      "isActive": true,
+      "balance": 890.12,
+      "registeredDate": "2024-08-30T16:00:00Z",
+      "address": {
+        "street": "500 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 6,
+      "name": "User 6",
+      "email": "user6@invalid.example",
+      "age": 29,
+      "isActive": true,
+      "balance": 4123.45,
+      "registeredDate": "2025-04-18T09:30:00Z",
+      "address": {
+        "street": "600 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 7,
+      "name": "User 7",
+      "email": "user7@invalid.example",
+      "age": 41,
+      "isActive": false,
+      "balance": 1567.9,
+      "registeredDate": "2024-12-10T13:45:00Z",
+      "address": {
+        "street": "700 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 8,
+      "name": "User 8",
+      "email": "user8@invalid.example",
+      "age": 36,
+      "isActive": true,
+      "balance": 2890.34,
+      "registeredDate": "2025-05-22T10:00:00Z",
+      "address": {
+        "street": "800 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 9,
+      "name": "User 9",
+      "email": "user9@invalid.example",
+      "age": 48,
+      "isActive": true,
+      "balance": 678.45,
+      "registeredDate": "2024-09-15T15:30:00Z",
+      "address": {
+        "street": "900 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 10,
+      "name": "User 10",
+      "email": "user10@invalid.example",
+      "age": 31,
+      "isActive": true,
+      "balance": 5234.78,
+      "registeredDate": "2025-06-08T12:15:00Z",
+      "address": {
+        "street": "1000 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 11,
+      "name": "User 11",
+      "email": "user11@invalid.example",
+      "age": 39,
+      "isActive": false,
+      "balance": 1234.0,
+      "registeredDate": "2024-10-20T07:45:00Z",
+      "address": {
+        "street": "1100 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    },
+    {
+      "id": 12,
+      "name": "User 12",
+      "email": "user12@invalid.example",
+      "age": 27,
+      "isActive": true,
+      "balance": 3678.92,
+      "registeredDate": "2025-07-03T14:00:00Z",
+      "address": {
+        "street": "1200 Example Rd",
+        "city": "Example City",
+        "state": "XX",
+        "zipCode": "00000",
+        "country": "Exampleland"
+      }
+    }
+  ]
+}
