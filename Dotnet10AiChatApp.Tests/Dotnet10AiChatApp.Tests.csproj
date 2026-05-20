@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dotnet10AiChatApp.csproj" />
+    <ProjectReference Include="..\Dotnet10AiChatApp\Dotnet10AiChatApp.csproj" />
   </ItemGroup>
 
 </Project>
