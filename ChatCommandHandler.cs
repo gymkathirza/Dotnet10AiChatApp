@@ -6,26 +6,16 @@ namespace Dotnet10AiChatApp;
 
 public static class ChatCommandHandler
 {
-    public static bool TryHandleCommand(string input,
-        ref ChatHistory chatHistory,
-        ref IChatCompletionService chatService,
-        ref Kernel kernel,
-        ref string provider,
-        ref string modelDisplay,
-        ref string systemPrompt,
-        ref string chatHistoryFile,
-        ref string? activeBranch,
-        ref Dictionary<string, ChatHistory> branches,
-        IConfiguration config)
+    public static bool TryHandleCommand(string input, ChatSessionState state)
     {
         switch (input)
         {
             case "/clear":
-                chatHistory = new ChatHistory();
-                chatHistory.AddSystemMessage(systemPrompt);
-                string clearFile = activeBranch is not null
-                    ? BranchManager.BranchFilePath(activeBranch)
-                    : chatHistoryFile;
+                state.ChatHistory = new ChatHistory();
+                state.ChatHistory.AddSystemMessage(state.SystemPrompt);
+                string clearFile = state.ActiveBranch is not null
+                    ? BranchManager.BranchFilePath(state.ActiveBranch)
+                    : state.ChatHistoryFile;
                 try { ChatHistoryStore.Delete(clearFile); } catch { }
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("  🗑  Chat history cleared.");
@@ -34,11 +24,11 @@ public static class ChatCommandHandler
                 return true;
 
             case "/history":
-                ConsoleHelpers.PrintHistory(chatHistory);
+                ConsoleHelpers.PrintHistory(state.ChatHistory);
                 return true;
 
             case "/branches":
-                BranchManager.PrintBranches(branches, activeBranch);
+                BranchManager.PrintBranches(state.Branches, state.ActiveBranch);
                 return true;
 
             case string s when s.StartsWith("/save "):
@@ -51,7 +41,7 @@ public static class ChatCommandHandler
                 }
                 try
                 {
-                    int count = ChatHistoryStore.Save(chatHistory, fileName);
+                    int count = ChatHistoryStore.Save(state.ChatHistory, fileName);
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"  💾 Saved {count} message(s) to {fileName}");
                     Console.ResetColor();
@@ -71,7 +61,7 @@ public static class ChatCommandHandler
                 }
                 try
                 {
-                    int count = ChatHistoryStore.Load(chatHistory, fileName);
+                    int count = ChatHistoryStore.Load(state.ChatHistory, fileName);
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"  📂 Loaded {count} message(s) from {fileName}");
                     Console.ResetColor();
@@ -91,16 +81,16 @@ public static class ChatCommandHandler
                 }
                 try
                 {
-                    var (newBuilder, newDisplay) = ProviderSetup.SetupProvider(provider, config, newModel);
-                    kernel = newBuilder.Build();
-                    chatService = kernel.GetRequiredService<IChatCompletionService>();
-                    chatHistory = new ChatHistory();
-                    chatHistory.AddSystemMessage(systemPrompt);
-                    string modelClearFile = activeBranch is not null
-                        ? BranchManager.BranchFilePath(activeBranch)
-                        : chatHistoryFile;
+                    var (newBuilder, newDisplay) = ProviderSetup.SetupProvider(state.Provider, state.Config, newModel);
+                    state.Kernel = newBuilder.Build();
+                    state.ChatService = state.Kernel.GetRequiredService<IChatCompletionService>();
+                    state.ChatHistory = new ChatHistory();
+                    state.ChatHistory.AddSystemMessage(state.SystemPrompt);
+                    string modelClearFile = state.ActiveBranch is not null
+                        ? BranchManager.BranchFilePath(state.ActiveBranch)
+                        : state.ChatHistoryFile;
                     try { ChatHistoryStore.Delete(modelClearFile); } catch { }
-                    modelDisplay = newDisplay;
+                    state.ModelDisplay = newDisplay;
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"  🔄 Switched model to {newDisplay}. History cleared.");
                     Console.ResetColor();
@@ -123,13 +113,13 @@ public static class ChatCommandHandler
                     ConsoleHelpers.Warn(validationError ?? "Branch name is invalid.");
                     return true;
                 }
-                BranchManager.SaveCurrentBranch(chatHistory, activeBranch, chatHistoryFile);
-                if (activeBranch is not null)
-                    branches[activeBranch] = chatHistory;
-                branches[branchName] = chatHistory;
-                activeBranch = branchName;
-                chatHistory = new ChatHistory();
-                chatHistory.AddSystemMessage(systemPrompt);
+                BranchManager.SaveCurrentBranch(state.ChatHistory, state.ActiveBranch, state.ChatHistoryFile);
+                if (state.ActiveBranch is not null)
+                    state.Branches[state.ActiveBranch] = state.ChatHistory;
+                state.Branches[branchName] = state.ChatHistory;
+                state.ActiveBranch = branchName;
+                state.ChatHistory = new ChatHistory();
+                state.ChatHistory.AddSystemMessage(state.SystemPrompt);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"  🌿 Branched to '{branchName}'. Starting fresh conversation.");
                 Console.ResetColor();
@@ -150,7 +140,7 @@ public static class ChatCommandHandler
                     ConsoleHelpers.Warn(validationError ?? "Branch name is invalid.");
                     return true;
                 }
-                if (string.Equals(branchName, activeBranch ?? "main", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(branchName, state.ActiveBranch ?? "main", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"  Already on branch '{branchName}'.");
@@ -159,16 +149,16 @@ public static class ChatCommandHandler
                     return true;
                 }
                 bool isMain = string.Equals(branchName, "main", StringComparison.OrdinalIgnoreCase);
-                if (!branches.ContainsKey(branchName))
+                if (!state.Branches.ContainsKey(branchName))
                 {
-                    string loadFile = isMain ? chatHistoryFile : BranchManager.BranchFilePath(branchName);
+                    string loadFile = isMain ? state.ChatHistoryFile : BranchManager.BranchFilePath(branchName);
                     if (File.Exists(loadFile))
                     {
                         var restored = new ChatHistory();
-                        restored.AddSystemMessage(systemPrompt);
+                        restored.AddSystemMessage(state.SystemPrompt);
                         try { ChatHistoryStore.Load(restored, loadFile); }
                         catch (Exception ex) { ConsoleHelpers.Warn($"Could not load branch: {ex.Message}"); return true; }
-                        branches[branchName] = restored;
+                        state.Branches[branchName] = restored;
                     }
                     else if (!isMain)
                     {
@@ -178,16 +168,16 @@ public static class ChatCommandHandler
                     else
                     {
                         var empty = new ChatHistory();
-                        empty.AddSystemMessage(systemPrompt);
-                        branches[branchName] = empty;
+                        empty.AddSystemMessage(state.SystemPrompt);
+                        state.Branches[branchName] = empty;
                     }
                 }
-                BranchManager.SaveCurrentBranch(chatHistory, activeBranch, chatHistoryFile);
-                if (activeBranch is not null)
-                    branches[activeBranch] = chatHistory;
-                chatHistory = branches[branchName];
-                activeBranch = isMain ? null : branchName;
-                int msgCount = chatHistory.Count(m => m.Role != AuthorRole.System);
+                BranchManager.SaveCurrentBranch(state.ChatHistory, state.ActiveBranch, state.ChatHistoryFile);
+                if (state.ActiveBranch is not null)
+                    state.Branches[state.ActiveBranch] = state.ChatHistory;
+                state.ChatHistory = state.Branches[branchName];
+                state.ActiveBranch = isMain ? null : branchName;
+                int msgCount = state.ChatHistory.Count(m => m.Role != AuthorRole.System);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"  🔀 Switched to branch '{(isMain ? "main" : branchName)}' ({msgCount} messages).");
                 Console.ResetColor();
@@ -208,7 +198,12 @@ public static class ChatCommandHandler
                     ConsoleHelpers.Warn(validationError ?? "Branch name is invalid.");
                     return true;
                 }
-                BranchManager.DeleteBranch(branchName, ref chatHistory, ref activeBranch, ref branches);
+                var currentHistory = state.ChatHistory;
+                var currentBranch = state.ActiveBranch;
+                var currentBranches = state.Branches;
+                BranchManager.DeleteBranch(branchName, ref currentHistory, ref currentBranch, ref currentBranches);
+                state.ChatHistory = currentHistory;
+                state.ActiveBranch = currentBranch;
                 return true;
             }
 
@@ -230,7 +225,12 @@ public static class ChatCommandHandler
                     ConsoleHelpers.Warn(newNameError ?? "Branch name is invalid.");
                     return true;
                 }
-                BranchManager.RenameBranch(parts[0], parts[1], ref chatHistory, ref activeBranch, ref branches, systemPrompt);
+                var currentHistory = state.ChatHistory;
+                var currentBranch = state.ActiveBranch;
+                var currentBranches = state.Branches;
+                BranchManager.RenameBranch(parts[0], parts[1], ref currentHistory, ref currentBranch, ref currentBranches, state.SystemPrompt);
+                state.ChatHistory = currentHistory;
+                state.ActiveBranch = currentBranch;
                 return true;
             }
         }

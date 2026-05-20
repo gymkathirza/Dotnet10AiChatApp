@@ -15,4 +15,7 @@
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.74.0-alpha" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Dotnet10AiChatApp.Tests\**\*.cs" />
+  </ItemGroup>
 </Project>

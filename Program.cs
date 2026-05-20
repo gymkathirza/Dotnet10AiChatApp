@@ -3,14 +3,6 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Dotnet10AiChatApp;
 
-// ── Self-test mode ────────────────────────────────────────────────────
-if (args.Length > 0 && args[0] == "--test")
-{
-    Console.WriteLine("Running self-tests...\n");
-    int failures = SelfTests.RunAll();
-    Environment.Exit(failures > 0 ? 1 : 0);
-}
-
 // ── Load configuration ─────────────────────────────────────────────────
 var config = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
@@ -34,6 +26,18 @@ chatHistory.AddSystemMessage(systemPrompt);
 // ── Branch system ──────────────────────────────────────────────────────
 var branches = new Dictionary<string, ChatHistory>(StringComparer.OrdinalIgnoreCase);
 string? activeBranch = null; // null = default/main
+
+var sessionState = new ChatSessionState(
+    chatHistory,
+    kernel,
+    chatService,
+    provider,
+    modelDisplay,
+    systemPrompt,
+    chatHistoryFile,
+    activeBranch,
+    branches,
+    config);
 
 // ── Display banner & load persisted history ────────────────────────────
 Console.Clear();
@@ -63,57 +67,5 @@ if (loadedMessages > 0)
     Console.WriteLine($"  📝 Loaded {loadedMessages} message(s) from {chatHistoryFile}");
 Console.WriteLine();
 
-// ── Chat loop ──────────────────────────────────────────────────────────
-while (true)
-{
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.Write("You > ");
-    Console.ResetColor();
-
-    string? input = Console.ReadLine();
-
-    if (string.IsNullOrWhiteSpace(input)) continue;
-    if (input is "exit" or "quit") break;
-
-    // ── Slash commands ─────────────────────────────────────────────────
-    if (ChatCommandHandler.TryHandleCommand(input, ref chatHistory, ref chatService, ref kernel,
-            ref provider, ref modelDisplay, ref systemPrompt,
-            ref chatHistoryFile, ref activeBranch, ref branches, config))
-        continue;
-
-    chatHistory.AddUserMessage(input);
-
-    Console.ForegroundColor = ConsoleColor.Cyan;
-    Console.Write("AI  > ");
-    Console.ResetColor();
-
-    try
-    {
-        var fullResponse = new System.Text.StringBuilder();
-        await foreach (var chunk in chatService.GetStreamingChatMessageContentsAsync(chatHistory))
-        {
-            Console.Write(chunk.Content);
-            fullResponse.Append(chunk.Content);
-        }
-        Console.WriteLine();
-        chatHistory.AddAssistantMessage(fullResponse.ToString());
-
-        // Auto-save current branch
-        string saveFile = activeBranch is not null
-            ? BranchManager.BranchFilePath(activeBranch)
-            : chatHistoryFile;
-        try { ChatHistoryStore.Save(chatHistory, saveFile); }
-        catch (Exception ex) { ConsoleHelpers.Warn($"Could not save history: {ex.Message}"); }
-    }
-    catch (Exception ex)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Error: {ex.Message}");
-        Console.ResetColor();
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// ── Slash command handler ──────────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
+await ChatSession.RunAsync(sessionState);
 

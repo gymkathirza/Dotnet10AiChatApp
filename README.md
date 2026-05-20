@@ -341,10 +341,10 @@ You > /branches
 ## 🧪 Running Tests
 
 ```bash
-dotnet run -- --test
+dotnet test
 ```
 
-Runs 15 self-tests covering the `ChatHistoryStore` persistence layer and branching:
+Runs xUnit tests covering the `ChatHistoryStore` persistence layer and branching behavior:
 
 - Load from nonexistent / empty / corrupted files
 - Save-then-load round-trip with message integrity
@@ -355,7 +355,6 @@ Runs 15 self-tests covering the `ChatHistoryStore` persistence layer and branchi
 - Unknown role filtering
 - Branch save/load in subdirectories
 - Branch file delete and rename on disk
-- Rename conflict detection (overwrite protection)
 
 ---
 
@@ -395,15 +394,16 @@ Runs 15 self-tests covering the `ChatHistoryStore` persistence layer and branchi
 
 ```
 Dotnet10AiChatApp/
-├── Program.cs              # Main application (multi-provider chat)
-├── ChatHistoryStore.cs     # Chat history persistence (save/load/delete)
-├── SelfTests.cs            # Self-contained test suite (15 tests)
-├── Dotnet10AiChatApp.csproj # Project file (net10.0, package references)
-├── Dotnet10AiChatApp.sln   # Solution file
-├── chat-history.json       # Persisted chat history (auto-created)
-├── branches/               # Named branch persistence files
-├── sample_data.json        # Sample data (not used by chat app)
-└── README.md               # This file
+├── Program.cs                      # Main application (multi-provider chat)
+├── ChatSessionState.cs             # Chat loop moved to a dedicated helper file
+├── ChatHistoryStore.cs             # Chat history persistence (save/load/delete)
+├── Dotnet10AiChatApp.csproj        # Project file (net10.0, package references)
+├── Dotnet10AiChatApp.sln           # Solution file
+├── Dotnet10AiChatApp.Tests/        # xUnit test project for application logic
+├── chat-history.json               # Persisted chat history (auto-created)
+├── branches/                       # Named branch persistence files
+├── sample_data.json                # Sample data (not used by chat app)
+└── README.md                       # This file
 ```
 
 ---
