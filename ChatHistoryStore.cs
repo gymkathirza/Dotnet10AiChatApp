@@ -55,6 +55,11 @@ public static class ChatHistoryStore
                 msg.Content ?? ""));
         }
         var json = JsonSerializer.Serialize(messages, JsonOptions);
+        var dir = Path.GetDirectoryName(filePath);
+        if (!string.IsNullOrEmpty(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
         File.WriteAllText(filePath, json);
         return messages.Count;
     }

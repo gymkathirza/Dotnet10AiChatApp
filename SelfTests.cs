@@ -79,9 +79,16 @@ public static class SelfTests
 
     static void Test_Load_NonExistentFile_ReturnsZero()
     {
-        var history = new Microsoft.SemanticKernel.ChatCompletion.ChatHistory();
-        int count = ChatHistoryStore.Load(history, "/nonexistent/path/file.json");
-        Check(count == 0, $"Expected 0, got {count}");
+        var dir = TempDir();
+        try
+        {
+            var history = new Microsoft.SemanticKernel.ChatCompletion.ChatHistory();
+            var file = Path.Combine(dir, "nonexistent-file.json");
+            Check(!File.Exists(file), "File should not exist before load");
+            int count = ChatHistoryStore.Load(history, file);
+            Check(count == 0, $"Expected 0, got {count}");
+        }
+        finally { if (Directory.Exists(dir)) Directory.Delete(dir, recursive: true); }
     }
 
     static void Test_Save_Then_Load_Roundtrip()
@@ -177,8 +184,15 @@ public static class SelfTests
 
     static void Test_Delete_NonExistentFile()
     {
-        bool deleted = ChatHistoryStore.Delete("/nonexistent/file.json");
-        Check(!deleted, "Delete should return false for nonexistent file");
+        var dir = TempDir();
+        try
+        {
+            var file = Path.Combine(dir, "no-such-file.json");
+            Check(!File.Exists(file), "File should not exist before delete");
+            bool deleted = ChatHistoryStore.Delete(file);
+            Check(!deleted, "Delete should return false for nonexistent file");
+        }
+        finally { if (Directory.Exists(dir)) Directory.Delete(dir, recursive: true); }
     }
 
     static void Test_Load_IntoNonEmptyHistory()

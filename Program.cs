@@ -229,6 +229,11 @@ static bool TryHandleCommand(string input,
                 Warn("Usage: /branch <name>");
                 return true;
             }
+            if (!IsValidBranchName(branchName, out var validationError))
+            {
+                Warn(validationError ?? "Branch name is invalid.");
+                return true;
+            }
             // Save current branch state
             SaveCurrentBranch(chatHistory, activeBranch, chatHistoryFile);
             // Update old branch's dictionary entry before switching
@@ -252,6 +257,11 @@ static bool TryHandleCommand(string input,
             if (string.IsNullOrWhiteSpace(branchName))
             {
                 Warn("Usage: /switch <name>");
+                return true;
+            }
+            if (branchName != "main" && !IsValidBranchName(branchName, out var validationError))
+            {
+                Warn(validationError ?? "Branch name is invalid.");
                 return true;
             }
             // Early return if already on this branch
@@ -312,6 +322,11 @@ static bool TryHandleCommand(string input,
                 Warn("Usage: /delete <branch-name>");
                 return true;
             }
+            if (!IsValidBranchName(branchName, out var validationError))
+            {
+                Warn(validationError ?? "Branch name is invalid.");
+                return true;
+            }
             DeleteBranch(branchName, ref chatHistory, ref activeBranch, ref branches);
             return true;
         }
@@ -324,7 +339,17 @@ static bool TryHandleCommand(string input,
                 Warn("Usage: /rename <old-name> <new-name>");
                 return true;
             }
-            RenameBranch(parts[0], parts[1], ref chatHistory, ref activeBranch, ref branches);
+            if (!IsValidBranchName(parts[0], out var oldNameError))
+            {
+                Warn(oldNameError ?? "Branch name is invalid.");
+                return true;
+            }
+            if (!IsValidBranchName(parts[1], out var newNameError))
+            {
+                Warn(newNameError ?? "Branch name is invalid.");
+                return true;
+            }
+            RenameBranch(parts[0], parts[1], ref chatHistory, ref activeBranch, ref branches, systemPrompt);
             return true;
         }
     }
@@ -335,14 +360,61 @@ static bool TryHandleCommand(string input,
 // ── Branch helpers ─────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
 
-static string BranchFilePath(string name) => Path.Combine("branches", $"{name}.json");
+static bool IsValidBranchName(string name, out string? error)
+{
+    error = null;
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        error = "Branch name cannot be empty.";
+        return false;
+    }
+    if (name.Contains("..", StringComparison.Ordinal))
+    {
+        error = "Branch name cannot contain '..' path segments.";
+        return false;
+    }
+    if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+        name.IndexOf(Path.DirectorySeparatorChar) >= 0 ||
+        name.IndexOf(Path.AltDirectorySeparatorChar) >= 0 ||
+        name.IndexOf(Path.VolumeSeparatorChar) >= 0)
+    {
+        error = "Branch name contains invalid characters or directory separators.";
+        return false;
+    }
+    if (name.StartsWith(".", StringComparison.Ordinal) || name.EndsWith(".", StringComparison.Ordinal))
+    {
+        error = "Branch name cannot start or end with a dot.";
+        return false;
+    }
+    return true;
+}
+
+static string BranchFilePath(string name)
+{
+    if (!IsValidBranchName(name, out var error))
+    {
+        throw new ArgumentException(error, nameof(name));
+    }
+
+    string branchesDir = Path.GetFullPath("branches");
+    string file = Path.GetFullPath(Path.Combine(branchesDir, $"{name}.json"));
+    if (!file.StartsWith(branchesDir + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+    {
+        throw new ArgumentException("Branch name resolves outside the branches directory.", nameof(name));
+    }
+    return file;
+}
 
 static void SaveCurrentBranch(ChatHistory chatHistory, string? activeBranch, string defaultFile)
 {
     string file = activeBranch is not null ? BranchFilePath(activeBranch) : defaultFile;
     try
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+        var dir = Path.GetDirectoryName(file);
+        if (!string.IsNullOrEmpty(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
         ChatHistoryStore.Save(chatHistory, file);
     }
     catch { /* best effort */ }
@@ -412,7 +484,8 @@ static void DeleteBranch(string branchName,
 static void RenameBranch(string oldName, string newName,
     ref ChatHistory chatHistory,
     ref string? activeBranch,
-    ref Dictionary<string, ChatHistory> branches)
+    ref Dictionary<string, ChatHistory> branches,
+    string systemPrompt)
 {
     if (string.Equals(oldName, "main", StringComparison.OrdinalIgnoreCase))
     {
@@ -442,6 +515,7 @@ static void RenameBranch(string oldName, string newName,
             return;
         }
         history = new ChatHistory();
+        history.AddSystemMessage(systemPrompt);
         try { ChatHistoryStore.Load(history, oldFile); }
         catch (Exception ex) { Warn($"Could not load branch: {ex.Message}"); return; }
     }

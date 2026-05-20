@@ -6,7 +6,7 @@ A multi-provider, interactive AI chat application built with **.NET 10** and **M
 
 ## 🏗 High-Level Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                     Terminal (User)                      │
 └─────────────────────┬───────────────────────────────────┘
@@ -52,7 +52,7 @@ A multi-provider, interactive AI chat application built with **.NET 10** and **M
 
 ## 🔄 Application Flow Diagram
 
-```
+```text
          ┌──────────┐
          │  START   │
          └────┬─────┘
@@ -243,7 +243,7 @@ The app will:
 4. Start an interactive chat loop (type `exit` to quit, `/clear` to reset history)
 
 **Example session (with persisted history):**
-```
+```text
 Checking Ollama... ✓
 
 ╔══════════════════════════════════════╗
@@ -285,7 +285,7 @@ You > exit
 
 Create multiple named conversation threads that persist independently:
 
-```
+```text
 You > /branch work
   🌿 Branched to 'work'. Starting fresh conversation.
 
@@ -317,7 +317,7 @@ AI  > We were discussing the project timeline.
 - **Delete a branch**: `/delete <name>` removes the branch from memory and disk. Cannot delete the main branch or the currently active branch.
 - **Rename a branch**: `/rename <old-name> <new-name>` changes the branch name in memory and on disk. The new name must not already exist.
 
-```
+```text
 You > /branches
   ── Branches ──
   * (main)
